@@ -22,6 +22,6 @@ type Lema {
 }
 
 type Arti {
-  kelas_kata String
-  deskripsi  String
+  kelasKata String
+  deskripsi String
 }

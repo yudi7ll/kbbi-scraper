@@ -6,7 +6,13 @@ const prisma = new PrismaClient()
 interface IDictResponse {
   status: boolean
   message: string
-  data: Lema[]
+  data: {
+    lema: string
+    arti: {
+      kelas_kata: string
+      deskripsi: string
+    }[]
+  }[]
 }
 
 async function getRandomWord(recursion = 0): Promise<string> {
@@ -40,12 +46,20 @@ async function main() {
     if (!response.ok) throw Error(`Failed to fetch dictionary from api for word: ${randomWord}`)
 
     const jsonData: IDictResponse = await response.json()
+
     await prisma.word.create({
       data: {
         kata: randomWord,
-        data: jsonData.data
-      }
+        data: jsonData.data.map(({ lema, arti }) => ({
+          lema,
+          arti: arti.map(({ kelas_kata, deskripsi }) => ({
+            kelasKata: kelas_kata,
+            deskripsi
+          }))
+        }))
+      },
     })
+    console.log(`word ${randomWord} stored successfully to the database`)
   }
   catch (e) {
     console.error(e)
