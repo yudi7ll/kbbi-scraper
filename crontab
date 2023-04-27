@@ -1,0 +1,1 @@
+* 1 * * * /usr/bin/docker restart kbbi-scraper

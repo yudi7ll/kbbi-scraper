@@ -1,4 +1,4 @@
-import { Lema, PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import fs from 'fs'
 
 const prisma = new PrismaClient()
@@ -35,8 +35,9 @@ async function getRandomWord(recursion = 0): Promise<string> {
   return randomWord
 }
 
-async function main() {
+async function main(recursion = 1) {
   try {
+    if (recursion > 50) return
     await prisma.$connect()
 
     const randomWord = await getRandomWord()
@@ -60,9 +61,11 @@ async function main() {
       },
     })
     console.log(`word ${randomWord} stored successfully to the database`)
+    await main(recursion + 1)
   }
   catch (e) {
     console.error(e)
+    process.exit(1)
   }
 }
 

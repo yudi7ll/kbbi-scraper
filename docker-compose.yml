@@ -1,15 +1,16 @@
-networks:
-  kbbi-scraper:
-
 services:
   app:
+    container_name: kbbi-scraper
     image: node:18-alpine
     restart: unless-stopped
+    env_file: .env
     volumes:
       - .:/app
     command: npm start
     working_dir: /app
-    depends_on:
-      - db
-    networks:
-      - kbbi-scraper
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 5
+        window: 10s
+        delay: 10s
